@@ -1,0 +1,474 @@
+openapi: 3.0.0
+info:
+  title: Clean Swift Backend API
+  version: 1.2.0
+  description: API documentation for Clean Swift Firebase backend (Firebase Functions)
+servers:
+  - url: http://localhost:5001/clean-swift-project/us-central1
+security:
+  - firebaseAuth: []
+components:
+  securitySchemes:
+    firebaseAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    GenericResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+    CreateAdminRequest:
+      type: object
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string }
+        phoneNumber: { type: string }
+        businessName: { type: string }
+        password: { type: string }
+    CreateUserRequest:
+      type: object
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        userName: { type: string }
+        email: { type: string }
+        phoneNumber: { type: string }
+    CreateServiceRequest:
+      type: object
+      properties:
+        providerId: { type: string }
+        serviceName: { type: string }
+        pricingModel: { type: string }
+        basePrice: { type: number }
+    CreateOrderRequest:
+      type: object
+      properties:
+        userId: { type: string }
+        providerId: { type: string }
+        items:
+          type: array
+          items: { type: object }
+        pickupDetails: { type: object }
+        deliveryDetails: { type: object }
+        pricing: { type: object }
+        payment: { type: object }
+        totalAmount: { type: number }
+        slotId: { type: string }
+    NotificationRequest:
+      type: object
+      properties:
+        userId: { type: string }
+        type: { type: string }
+        title: { type: string }
+        message: { type: string }
+        channel: { type: string }
+        to: { type: string }
+        fcmToken: { type: string }
+        emailSubject: { type: string }
+    ReviewRequest:
+      type: object
+      properties:
+        orderId: { type: string }
+        userId: { type: string }
+        rating: { type: number }
+        comment: { type: string }
+        images:
+          type: array
+          items: { type: string }
+    CouponRequest:
+      type: object
+      properties:
+        couponName: { type: string }
+        couponCode: { type: string }
+        maxDiscount: { type: number }
+        minValue: { type: number }
+        validFrom: { type: string, format: date-time }
+        validTill: { type: string, format: date-time }
+paths:
+  # Admin APIs
+  /adminApi-createAdmin:
+    post:
+      summary: Admin onboarding (step 1: register and send OTP)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdminRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+  /adminApi-verifyAdminOtp:
+    post:
+      summary: Admin onboarding (step 2: verify OTP)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                otp: { type: string }
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+  /adminApi-createWorkingHours:
+    post:
+      summary: Create working hours for provider
+      responses:
+        "200": { description: Success }
+  /adminApi-updateWorkingHours:
+    post:
+      summary: Update working hours for provider
+      responses:
+        "200": { description: Success }
+  /adminApi-deleteWorkingHours:
+    post:
+      summary: Delete working hours for provider
+      responses:
+        "200": { description: Success }
+  /adminApi-listWorkingHours:
+    post:
+      summary: List working hours for provider
+      responses:
+        "200": { description: Success }
+  /adminApi-createServiceableArea:
+    post:
+      summary: Create serviceable area
+      responses:
+        "200": { description: Success }
+  /adminApi-updateServiceableArea:
+    post:
+      summary: Update serviceable area
+      responses:
+        "200": { description: Success }
+  /adminApi-deleteServiceableArea:
+    post:
+      summary: Delete serviceable area
+      responses:
+        "200": { description: Success }
+  /adminApi-listServiceableAreas:
+    post:
+      summary: List serviceable areas
+      responses:
+        "200": { description: Success }
+  /adminApi-createStaff:
+    post:
+      summary: Create staff
+      responses:
+        "200": { description: Success }
+  /adminApi-updateStaff:
+    post:
+      summary: Update staff
+      responses:
+        "200": { description: Success }
+  /adminApi-deleteStaff:
+    post:
+      summary: Delete staff
+      responses:
+        "200": { description: Success }
+  /adminApi-listStaff:
+    post:
+      summary: List staff
+      responses:
+        "200": { description: Success }
+  /adminApi-getProviderAnalytics:
+    post:
+      summary: Get provider analytics
+      responses:
+        "200": { description: Success }
+  /adminApi-summarizeReviews:
+    post:
+      summary: Summarize reviews
+      responses:
+        "200": { description: Success }
+  /adminApi-updateAdminProfile:
+    post:
+      summary: Update admin profile
+      responses:
+        "200": { description: Success }
+  /adminApi-updateProviderStatus:
+    post:
+      summary: Update provider status
+      responses:
+        "200": { description: Success }
+  /adminApi-createSession:
+    post:
+      summary: Create admin session
+      responses:
+        "200": { description: Success }
+  /adminApi-refreshSession:
+    post:
+      summary: Refresh admin session
+      responses:
+        "200": { description: Success }
+  /adminApi-deleteSession:
+    post:
+      summary: Delete admin session
+      responses:
+        "200": { description: Success }
+  /adminApi-validateSession:
+    post:
+      summary: Validate admin session
+      responses:
+        "200": { description: Success }
+  # User APIs
+  /userApi-createUser:
+    post:
+      summary: User registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericResponse"
+  /userApi-createReview:
+    post:
+      summary: Create review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewRequest"
+      responses:
+        "200": { description: Success }
+  /userApi-updateReview:
+    post:
+      summary: Update review
+      responses:
+        "200": { description: Success }
+  /userApi-deleteReview:
+    post:
+      summary: Delete review
+      responses:
+        "200": { description: Success }
+  /userApi-listReviews:
+    post:
+      summary: List reviews
+      responses:
+        "200": { description: Success }
+  /userApi-createPaymentMethod:
+    post:
+      summary: Create payment method
+      responses:
+        "200": { description: Success }
+  /userApi-updatePaymentMethod:
+    post:
+      summary: Update payment method
+      responses:
+        "200": { description: Success }
+  /userApi-deletePaymentMethod:
+    post:
+      summary: Delete payment method
+      responses:
+        "200": { description: Success }
+  /userApi-listPaymentMethods:
+    post:
+      summary: List payment methods
+      responses:
+        "200": { description: Success }
+  /userApi-createUserAddress:
+    post:
+      summary: Create user address
+      responses:
+        "200": { description: Success }
+  /userApi-updateUserAddress:
+    post:
+      summary: Update user address
+      responses:
+        "200": { description: Success }
+  /userApi-deleteUserAddress:
+    post:
+      summary: Delete user address
+      responses:
+        "200": { description: Success }
+  /userApi-listUserAddresses:
+    post:
+      summary: List user addresses
+      responses:
+        "200": { description: Success }
+  /userApi-exportUserData:
+    post:
+      summary: Export user data
+      responses:
+        "200": { description: Success }
+  /userApi-deleteUserAccount:
+    post:
+      summary: Delete user account
+      responses:
+        "200": { description: Success }
+  /userApi-createSession:
+    post:
+      summary: Create user session
+      responses:
+        "200": { description: Success }
+  /userApi-refreshSession:
+    post:
+      summary: Refresh user session
+      responses:
+        "200": { description: Success }
+  /userApi-deleteSession:
+    post:
+      summary: Delete user session
+      responses:
+        "200": { description: Success }
+  /userApi-validateSession:
+    post:
+      summary: Validate user session
+      responses:
+        "200": { description: Success }
+  # Services APIs
+  /servicesApi-createService:
+    post:
+      summary: Create service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServiceRequest"
+      responses:
+        "200": { description: Success }
+  /servicesApi-updateService:
+    post:
+      summary: Update service
+      responses:
+        "200": { description: Success }
+  /servicesApi-deleteService:
+    post:
+      summary: Delete service
+      responses:
+        "200": { description: Success }
+  /servicesApi-listServices:
+    post:
+      summary: List services
+      responses:
+        "200": { description: Success }
+  /servicesApi-isAddressInServiceArea:
+    post:
+      summary: Check if address is in service area
+      responses:
+        "200": { description: Success }
+  /servicesApi-listSlots:
+    post:
+      summary: List slots
+      responses:
+        "200": { description: Success }
+  # Orders APIs
+  /ordersApi-createOrder:
+    post:
+      summary: Place order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderRequest"
+      responses:
+        "200": { description: Success }
+  /ordersApi-updateOrderStatus:
+    post:
+      summary: Update order status
+      responses:
+        "200": { description: Success }
+  /ordersApi-listOrders:
+    post:
+      summary: List orders
+      responses:
+        "200": { description: Success }
+  /ordersApi-cancelOrder:
+    post:
+      summary: Cancel order
+      responses:
+        "200": { description: Success }
+  /ordersApi-autoUpdateOrderStatus:
+    post:
+      summary: Auto-update order status
+      responses:
+        "200": { description: Success }
+  # Notifications APIs
+  /notificationsApi-sendNotification:
+    post:
+      summary: Send notification (SMS, email, push)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationRequest"
+      responses:
+        "200": { description: Success }
+  # Reviews APIs
+  /reviewsApi-createReview:
+    post:
+      summary: Create review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewRequest"
+      responses:
+        "200": { description: Success }
+  /reviewsApi-updateReview:
+    post:
+      summary: Update review
+      responses:
+        "200": { description: Success }
+  /reviewsApi-deleteReview:
+    post:
+      summary: Delete review
+      responses:
+        "200": { description: Success }
+  /reviewsApi-listReviews:
+    post:
+      summary: List reviews
+      responses:
+        "200": { description: Success }
+  # Coupons APIs
+  /couponsApi-createCoupon:
+    post:
+      summary: Create coupon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CouponRequest"
+      responses:
+        "200": { description: Success }
+  /couponsApi-updateCoupon:
+    post:
+      summary: Update coupon
+      responses:
+        "200": { description: Success }
+  /couponsApi-deleteCoupon:
+    post:
+      summary: Delete coupon
+      responses:
+        "200": { description: Success }
+  /couponsApi-listCoupons:
+    post:
+      summary: List coupons
+      responses:
+        "200": { description: Success }

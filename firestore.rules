@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Providers (Admins)
+    match /providers/{providerId} {
+      allow read, write: if request.auth != null && request.auth.uid == providerId;
+      match /{subCollection=**}/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == providerId;
+      }
+    }
+    // Users
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /{subCollection=**}/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    // Services (readable by anyone, writable by provider)
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.resource.data.providerId == request.auth.uid;
+    }
+    // Orders (user or provider can read/write their own)
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        request.auth.uid == resource.data.providerId
+      );
+    }
+    // Reviews (user can write their own, provider can read)
+    match /reviews/{reviewId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+    // Coupons (readable by anyone, writable by admin)
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+    // Notifications (user only)
+    match /notifications/{notificationId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    // Sessions (user/admin only)
+    match /userSessions/{sessionId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    match /adminSessions/{sessionId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    // Addresses (user only)
+    match /userAddresses/{addressId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    // Payment Methods (user only)
+    match /paymentMethods/{paymentId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    // Slots (readable by anyone, writable by provider)
+    match /slots/{slotId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.resource.data.providerId == request.auth.uid;
+    }
+    // Audit logs (readable by admin only)
+    match /auditLogs/{logId} {
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false;
+    }
+  }
+}

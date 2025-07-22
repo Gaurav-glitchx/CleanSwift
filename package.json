@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@types/stripe": "^8.0.416",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34"
+  },
+  "dependencies": {
+    "firebase-functions": "^6.4.0",
+    "nodemailer": "^7.0.5",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  }
+}
